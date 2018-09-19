@@ -21,7 +21,7 @@ int main()
 	//define server structure
 	struct sockaddr_in server_address;
 	server_address.sin_family = AF_INET;
-	server_address.sin_port = htons(8000);
+	server_address.sin_port = htons(8002);
 	server_address.sin_addr.s_addr = INADDR_ANY;//to specifiy you can use inet_addr(<server_address>) function
 	//bind address to socket
 	bind(server_socket,(struct sockaddr *) &server_address, sizeof(server_address));
@@ -35,6 +35,5 @@ int main()
 		send(client_socket,http_header,sizeof(http_header),0);
 		close(client_socket);
 	}
-
 	return 0;
 }
