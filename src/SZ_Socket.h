@@ -2,6 +2,7 @@
 // Port value ranges from 0 to 65535 so unsigned short is chosen
 typedef unsigned short SZ_Port;     //HACK (Zero): Range of unsigned short 0 to 65,535 on all platforms?
 typedef char SZ_Address[20];        //HACK (Zero): Size of the address only upto 20?
+typedef void* SZ_Handle;
 
 enum SZ_Protocal
 {
@@ -11,6 +12,7 @@ enum SZ_Protocal
 
 struct SZ_Socket
 {
+	void* handle;
     SZ_Address address;
     SZ_Port port;
     SZ_Protocal protocal;
