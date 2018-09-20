@@ -4,7 +4,7 @@
 - `src` contains all source files
 - `include` contains all files for include
 - `src/linux` contains all source files for linux
-- `src/windows` contains all sourxe files for windows
+- `src/windows` contains all source files for windows
 
 ## Building -- won't work currently
 All build scripts are available in `build_scripts` directory
