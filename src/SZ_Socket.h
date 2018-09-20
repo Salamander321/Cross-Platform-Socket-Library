@@ -12,7 +12,7 @@ enum SZ_Protocal
 
 struct SZ_Socket
 {
-	void* handle;
+	SZ_Handle* handle;
     SZ_Address address;
     SZ_Port port;
     SZ_Protocal protocal;
