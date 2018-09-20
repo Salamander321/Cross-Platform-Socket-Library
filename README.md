@@ -10,8 +10,8 @@
 All build scripts are available in `build_scripts` directory
 
 # Linux with GCC
-- For debug build run [build_linux_debug.sh](./build_scripts/build_linux_debug.sh)
-- For release build run [build_linux.sh](./build_scripts/build_linux.sh)
+- For debug build run [build_linux.sh](./build_scripts/build_linux.sh)
+- For release build run [build_linux.sh](./build_scripts/build_linux.sh) with `-release` flag
 
 # Windows with Visual Studio
 - Open [VS Solution File](./build_scripts/vs_sln/vs_sln.sln) and compile
