@@ -16,6 +16,7 @@ struct SZ_Socket
     SZ_Address address;
     SZ_Port port;
     SZ_Protocal protocal;
+    struct sockaddr_in *SZ_Socket_address;//(Salamander) if windows have something similar to it you may add it
     /*NOTE (Zero): Other properties can be added if required */
 };
 
