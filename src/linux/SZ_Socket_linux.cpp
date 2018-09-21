@@ -24,11 +24,9 @@ SZ_API SZ_OpenSocket(SZ_Address address, SZ_Port port, SZ_Protocal protocal, SZ_
     Socket->protocal = protocal;
     Socket->SZ_Socket_address.sin_port = htons(Socket->port);
     Socket->SZ_Socket_address.sin_family = AF_INET;
-    Socket->SZ_Socket_address.sin_addr.s_addr = inet_addr(Socket->address);//inet_addr(Socket->address);
+    Socket->SZ_Socket_address.sin_addr.s_addr = inet_addr(Socket->address);//INADDR_ANY;
     //opening socket
     Socket->handle = socket(AF_INET,SOCK_STREAM,Socket->protocal);
-    //printf("Initialisation Completed and Value of handle is %d\n",Socket->handle);
-    //printf("handle mama");
 	return SZ_API::SZ_SUCCESS;
 }
 
@@ -36,11 +34,7 @@ SZ_API SZ_BindSocket(SZ_Socket* Socket)
 {
 
     int error = bind(Socket->handle,(struct sockaddr*) &Socket->SZ_Socket_address,sizeof(Socket->SZ_Socket_address));
-    
-    if (error < 0)
-    {
-    printf("There was an binding error");
-    }
+        
     
 	return SZ_API::SZ_SUCCESS;
 }
@@ -48,12 +42,6 @@ SZ_API SZ_BindSocket(SZ_Socket* Socket)
 SZ_API SZ_ListenFromSocket(SZ_Socket* Socket)
 {
     listen(Socket->handle,Socket->no_connection);
-    struct sockaddr_in sin;
-socklen_t len = sizeof(sin);
-if (getsockname(Socket->handle,(struct sockaddr*) &Socket->SZ_Socket_address, &len) == -1)
-    perror("getsockname");
-else
-    printf("port number %d\n", ntohs(sin.sin_port));
 	return SZ_API::SZ_SUCCESS;
 }
 
