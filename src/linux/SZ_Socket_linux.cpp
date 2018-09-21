@@ -51,23 +51,25 @@ SZ_API SZ_ConnectToSocket(SZ_Socket* Socket)
 	return SZ_API::SZ_SUCCESS;
 }
 
-SZ_Socket SZ_AcceptSocket(SZ_Socket*)
+SZ_Socket SZ_AcceptSocket(SZ_Socket* Socket)
 {
-
+       
 	SZ_Socket resultSocket;
-
+	resultSocket.handle = accept(Socket->handle,NULL,NULL);
 	return resultSocket;
 }
 
-SZ_API SZ_SendTo(SZ_Socket*, char* msg, unsigned int size)
+SZ_API SZ_SendTo(SZ_Socket* Socket, char* msg, unsigned int size)
 {
-
+    send(Socket->handle,msg,size,0);
 	return SZ_API::SZ_SUCCESS;
+
 }
-
-SZ_API SZ_ReceiveFrom(SZ_Socket*, char* msg, unsigned int size)
+SZ_API SZ_ReceiveFrom(SZ_Socket* Socket, char* msg, unsigned int size)
 {
-
+    char temp_message[256];
+    recv(Socket->handle,&temp_message,size,0);
+	strcpy(msg,temp_message);
 	return SZ_API::SZ_SUCCESS;
 }
 
