@@ -1,8 +1,10 @@
+#include <netinet/in.h>
+#include <cstring>
 // Data Types
 // Port value ranges from 0 to 65535 so unsigned short is chosen
 typedef unsigned short SZ_Port;     //HACK (Zero): Range of unsigned short 0 to 65,535 on all platforms?
 typedef char SZ_Address[20];        //HACK (Zero): Size of the address only upto 20?
-typedef void* SZ_Handle;
+typedef void SZ_Handle;
 
 enum SZ_Protocal
 {
@@ -12,11 +14,13 @@ enum SZ_Protocal
 
 struct SZ_Socket
 {
-	SZ_Handle* handle;
+	//SZ_Handle* handle;
+    int handle;
     SZ_Address address;
     SZ_Port port;
     SZ_Protocal protocal;
-    struct sockaddr_in *SZ_Socket_address;//(Salamander) if windows have something similar to it you may add it
+    struct sockaddr_in SZ_Socket_address;
+    int no_connection;//(Salamander) if windows have something similar to it you may add it
     /*NOTE (Zero): Other properties can be added if required */
 };
 
@@ -45,7 +49,7 @@ enum SZ_API
 SZ_API SZ_InitializeAPI();
 
 // Create Socket 
-SZ_API SZ_OpenSocket(SZ_Address, SZ_Port, SZ_Protocal, SZ_Socket**);
+SZ_API SZ_OpenSocket(SZ_Address, SZ_Port, SZ_Protocal, SZ_Socket*);
 
 // Bind Socket
 SZ_API SZ_BindSocket(SZ_Socket*);
