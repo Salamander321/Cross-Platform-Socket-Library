@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <cstdio>
+#include <unistd.h>
 
 //NOTE (Zero): Your API code for linux should go here
 //(Salamander): No error handle has been made.
@@ -67,15 +67,15 @@ SZ_API SZ_SendTo(SZ_Socket* Socket, char* msg, unsigned int size)
 }
 SZ_API SZ_ReceiveFrom(SZ_Socket* Socket, char msg[], unsigned int size)
 {
-    char temp_message[256];
+    char temp_message[size];
     recv(Socket->handle,&temp_message,sizeof(temp_message),0);
 	strcpy(msg,temp_message);
 	return SZ_API::SZ_SUCCESS;
 }
 
-SZ_API SZ_CloseSocket(SZ_Socket*)
+SZ_API SZ_CloseSocket(SZ_Socket* Socket)
 {
-    
+    close(Socket->handle);
 	return SZ_API::SZ_SUCCESS;
 }
 
