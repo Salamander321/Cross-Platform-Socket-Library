@@ -65,17 +65,17 @@ SZ_API SZ_SendTo(SZ_Socket* Socket, char* msg, unsigned int size)
 	return SZ_API::SZ_SUCCESS;
 
 }
-SZ_API SZ_ReceiveFrom(SZ_Socket* Socket, char* msg, unsigned int size)
+SZ_API SZ_ReceiveFrom(SZ_Socket* Socket, char msg[], unsigned int size)
 {
     char temp_message[256];
-    recv(Socket->handle,&temp_message,size,0);
+    recv(Socket->handle,&temp_message,sizeof(temp_message),0);
 	strcpy(msg,temp_message);
 	return SZ_API::SZ_SUCCESS;
 }
 
 SZ_API SZ_CloseSocket(SZ_Socket*)
 {
-
+    
 	return SZ_API::SZ_SUCCESS;
 }
 

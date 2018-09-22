@@ -67,7 +67,7 @@ SZ_Socket SZ_AcceptSocket(SZ_Socket*);
 SZ_API SZ_SendTo(SZ_Socket*, char* msg, unsigned int size);
 
 // Receive message from socket
-SZ_API SZ_ReceiveFrom(SZ_Socket*, char* msg, unsigned int size);
+SZ_API SZ_ReceiveFrom(SZ_Socket*, char msg[], unsigned int size);
 
 // Close Socket
 SZ_API SZ_CloseSocket(SZ_Socket*);
