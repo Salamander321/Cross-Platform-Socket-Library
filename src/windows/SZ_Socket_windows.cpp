@@ -86,8 +86,8 @@ SZ_API SZ_OpenServerSocket(SZ_Port port, SZ_Protocol protocol, SZ_Connection con
 SZ_API SZ_AcceptClient(const SZ_Socket& server, SZ_Socket* client)
 {
 	sockaddr addr;
-	int addr_len;
-	SOCKET clientSocket = accept(*(unsigned int*)server.handle, &addr, &addr_len);
+	int addr_len = sizeof(sockaddr);
+	SOCKET clientSocket = accept(*(SOCKET*)server.handle, &addr, &addr_len);
 	if (clientSocket == INVALID_SOCKET)
 		return SZ_API::SZ_SOCKET_ACCEPT_FAILED;
 
@@ -137,6 +137,7 @@ SZ_API SZ_OpenClientSocket(SZ_Address address, SZ_Port port, SZ_Protocol protoco
 		errCode = connect(wSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
 		if (errCode == SOCKET_ERROR) 
 		{
+			printf("Error=%d", WSAGetLastError());
 			closesocket(wSocket);
 			wSocket = INVALID_SOCKET;
 			continue;
@@ -161,84 +162,84 @@ void SZ_Receive(const SZ_Socket& client, char* buffer, int size, SZ_Callback cal
 {
 	int result = 1;
 	unsigned int callbackResult = 1;
-	SOCKET clientSocket = *(unsigned int*)client.handle;
-	while(result != 0 || callbackResult > 0)
+	SOCKET clientSocket = *(SOCKET*)client.handle;
+	while(result > 0 && callbackResult != 0)
 	{
 		result = recv(clientSocket, buffer, size, 0);
 		if (result > 0)
-			callbackResult = callback(SZ_BYTE_RECEIVED, buffer, result);
+			callbackResult = callback(SZ_BYTE_RECEIVED, &client, buffer, result);
 		else if (result == 0)
-			callbackResult = callback(SZ_CLOSING_CONNECTION, null, 0);
+			callbackResult = callback(SZ_CLOSING_CONNECTION, &client, null, 0);
 		else 
 		{
 			switch (result)
 			{
 			case WSANOTINITIALISED:
-				callbackResult = callback(SZ_NOT_INITIALIZED, null, 0);
+				callbackResult = callback(SZ_NOT_INITIALIZED, &client, null, 0);
 				break;
 
 			case WSAENETDOWN:
-				callbackResult = callback(SZ_NETWORK_DOWN, null, 0);
+				callbackResult = callback(SZ_NETWORK_DOWN, &client, null, 0);
 				break;
 
 			case WSAEFAULT:
-				callbackResult = callback(SZ_BUFFER_ERROR, null, 0);
+				callbackResult = callback(SZ_BUFFER_ERROR, &client, null, 0);
 				break;
 
 			case WSAENOTCONN:
-				callbackResult = callback(SZ_SOCKET_NOT_CONNECTED, null, 0);
+				callbackResult = callback(SZ_SOCKET_NOT_CONNECTED, &client, null, 0);
 				break;
 
 			case WSAEINTR:
-				callbackResult = callback(SZ_BLOCKED, null, 0);
+				callbackResult = callback(SZ_BLOCKED, &client, null, 0);
 				break;
 
 			case WSAEINPROGRESS:
-				callbackResult = callback(SZ_IN_PROGRESS, null, 0);
+				callbackResult = callback(SZ_IN_PROGRESS, &client, null, 0);
 				break;
 
 			case WSAENETRESET:
-				callbackResult = callback(SZ_BROKEN_CONNECTION, null, 0);
+				callbackResult = callback(SZ_BROKEN_CONNECTION, &client, null, 0);
 				break;
 
 			case WSAENOTSOCK:
-				callbackResult = callback(SZ_NOT_SOCKET, null, 0);
+				callbackResult = callback(SZ_NOT_SOCKET, &client, null, 0);
 				break;
 
 			case WSAEOPNOTSUPP:
-				callbackResult = callback(SZ_UNSUPPORTED_DATA, null, 0);
+				callbackResult = callback(SZ_UNSUPPORTED_DATA, &client, null, 0);
 				break;
 
 			case WSAESHUTDOWN:
-				callbackResult = callback(SZ_SOCKET_SHUTDOWNED, null, 0);
+				callbackResult = callback(SZ_SOCKET_SHUTDOWNED, &client, null, 0);
 				break;
 
 			case WSAEWOULDBLOCK:
-				callbackResult = callback(SZ_BLOCKED, null, 0);
+				callbackResult = callback(SZ_BLOCKED, &client, null, 0);
 				break;
 
 			case WSAEMSGSIZE:
-				callbackResult = callback(SZ_MSG_LARGER_THAN_BUFFER, null, 0);
+				callbackResult = callback(SZ_MSG_LARGER_THAN_BUFFER, &client, null, 0);
 				break;
 
 			case WSAEINVAL:
-				callbackResult = callback(SZ_ERROR_FLAG, null, 0);
+				callbackResult = callback(SZ_ERROR_FLAG, &client, null, 0);
 				break;
 
 			case WSAECONNABORTED:
-				callbackResult = callback(SZ_TIMED_OUT, null, 0);
+				callbackResult = callback(SZ_TIMED_OUT, &client, null, 0);
 				break;
 
 			case WSAETIMEDOUT:
-				callbackResult = callback(SZ_TIMED_OUT, null, 0);
+				callbackResult = callback(SZ_TIMED_OUT, &client, null, 0);
 				break;
 
 			case WSAECONNRESET:
-				callbackResult = callback(SZ_CONNECTION_RESET, null, 0);
+				callbackResult = callback(SZ_CONNECTION_RESET, &client, null, 0);
 				break;
 
 				default:
-				callbackResult = callback(SZ_FAILED_TO_RECEIVE, null, 0);
+				callbackResult = callback(SZ_FAILED_TO_RECEIVE, &client, null, 0);
 				break;
 			}
 		}
@@ -247,9 +248,9 @@ void SZ_Receive(const SZ_Socket& client, char* buffer, int size, SZ_Callback cal
 	shutdown(clientSocket, SD_SEND);
 }
 
-SZ_Message SZ_Send(const SZ_Socket& client, char* buffer, int size, int* sent)
+SZ_Message SZ_Send(const SZ_Socket& client, const char* buffer, int size, int* sent)
 {
-	int result = send(*(unsigned int*)client.handle, buffer, size, 0);
+	int result = send(*(SOCKET*)client.handle, buffer, size, 0);
 	if (result > 0)
 	{
 		if (sent != null)

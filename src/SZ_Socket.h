@@ -37,13 +37,15 @@ typedef char SZ_Address[14];
 typedef void* SZ_Handle;
 // Number of connections supported by server, for max connection set this to SZ_MAX_CONNECTION
 typedef int SZ_Connection;
-// Call back when message is received
-typedef unsigned int(*SZ_Callback)(SZ_Message, char*, int);
 
 // Maximum connections supported in a single server
 extern const SZ_Connection SZ_MAX_CONNECTION;
 
-// Connection to any random port, setting this will cause the struct SZ_Socket to have port of 0
+/*
+	- Connection to any random port, setting this will cause the struct SZ_Socket to have port of 0
+	- You must never specifiy this to the client socket, always specify this to the server socket
+	- The port specified when opening client socket must be the port of the server
+*/
 extern const SZ_Port SZ_ANY_PORT;
 
 // it's just preference
@@ -53,22 +55,6 @@ extern const SZ_Port SZ_ANY_PORT;
 enum SZ_Protocol
 {
     SZ_TCP, SZ_UDP
-};
-
-/*
-	- Socket structure for exposing API
-	- The structure must not be filled by user and should only be filled by calling API functions
-	- The members should be used read only
-	- Server doesn't receive `port` information, so the value will be garbage for the struct received by server on connection
-	- Client doesn't use `connections`, so the value will be garbage
-*/
-struct SZ_Socket
-{
-    SZ_Handle handle;
-    SZ_Address address;
-    SZ_Port port;
-    SZ_Protocol protocol;
-	SZ_Connection connections;
 };
 
 // Return values for all of the API calls, except in some cases when the function returns void
@@ -84,6 +70,7 @@ enum SZ_API
 	SZ_SOCKET_ACCEPT_FAILED
 };
 
+struct SZ_Socket;
 
 // Available Functions //
 
@@ -105,13 +92,16 @@ SZ_API SZ_AcceptClient(const SZ_Socket& server, SZ_Socket* client);
 // To connect to a Server
 SZ_API SZ_OpenClientSocket(SZ_Address, SZ_Port, SZ_Protocol, SZ_Socket*);
 
+// Call back when message is received
+typedef unsigned int(*SZ_Callback)(SZ_Message, const SZ_Socket*, char*, int);
+
 /*
 	- Used to receive message
 	- When in server, specify the socket of the client you want to receive message from
 	- When in client, specify the socket of the client you want to receive message to
 	- This functions keeps on receiving messages until the socket is closed
 	- To stop further receiving message, the `callback` should return 0, to continue receiving 1
-	- Callback is send with the status message, message received and number of character in message
+	- Callback is send with the status message, client socket, message received and number of character in message
 	- If the status message is other than `SZ_BYTE_RECEIVED`, then the receiving failed and message is `null` and characters number is 0
 */
 void SZ_Receive(const SZ_Socket& client, char* buffer, int size, SZ_Callback callback);
@@ -123,7 +113,7 @@ void SZ_Receive(const SZ_Socket& client, char* buffer, int size, SZ_Callback cal
 	- Returns `SZ_BYTE_SENT` is the process was a success
 	- `sent` returns the number of characters sent, if `null` is specified, it is not used
 */
-SZ_Message SZ_Send(const SZ_Socket& client, char* buffer, int size, int* sent);
+SZ_Message SZ_Send(const SZ_Socket& client, const char* buffer, int size, int* sent);
 
 // No further reception will be accepted from the socket after this function is called
 void SZ_SocketStopRcv(SZ_Socket*);
@@ -136,3 +126,24 @@ void SZ_CloseSocket(SZ_Socket*);
 
 // Shutdown all networking API calls, should be called after work has been completed
 void SZ_ShutdownAPI();
+
+// This is for some easy funtionality
+typedef SZ_Message(*SZ_Reply)(const SZ_Socket& client, const char* buffer, int size, int* sent);
+
+/*
+	- Socket structure for exposing API
+	- The structure must not be filled by user and should only be filled by calling API functions
+	- The members should be used read only
+	- Server doesn't receive `port` information, so the value will be garbage for the struct received by server on connection
+	- Client doesn't use `connections`, so the value will be garbage
+*/
+struct SZ_Socket
+{
+	SZ_Handle handle;
+	SZ_Address address;
+	SZ_Port port;
+	SZ_Protocol protocol;
+	SZ_Connection connections;
+
+	const SZ_Reply Reply = SZ_Send;
+};
