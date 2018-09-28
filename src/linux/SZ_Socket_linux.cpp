@@ -9,6 +9,7 @@
 #include <netdb.h>
 
 const SZ_Connection SZ_MAX_CONNECTION = 0x7fffffff;
+const SZ_Port SZ_ANY_PORT = 0;
 
 SZ_API SZ_InitializeAPI()
 {

@@ -1,3 +1,8 @@
+/*
+	- Socket moZilla library for crossplatform (Windows and Linux) socket and networking
+	- Authors Salamander(https://github.com/Salamander321) and Zero(https://github.com/00Zero0)
+	- This software is available as open domain
+*/
 
 // Messages returned during sending and receiving process 
 enum SZ_Message
@@ -37,6 +42,9 @@ typedef unsigned int(*SZ_Callback)(SZ_Message, char*, int);
 
 // Maximum connections supported in a single server
 extern const SZ_Connection SZ_MAX_CONNECTION;
+
+// Connection to any random port, setting this will cause the struct SZ_Socket to have port of 0
+extern const SZ_Port SZ_ANY_PORT;
 
 // it's just preference
 #define null 0

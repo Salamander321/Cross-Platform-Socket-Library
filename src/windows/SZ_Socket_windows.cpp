@@ -3,13 +3,14 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <stdint.h>
-#include <cstdlib>
+#include <iostream>
 
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
 
 const SZ_Connection SZ_MAX_CONNECTION = 0x7fffffff;
+const SZ_Port SZ_ANY_PORT = 0;
 static bool sz_apiStarted = false;
 
 SZ_API SZ_InitializeAPI()
@@ -45,7 +46,7 @@ SZ_API SZ_OpenServerSocket(SZ_Port port, SZ_Protocol protocol, SZ_Connection con
 	}
 
 	char port_str[6];
-	itoa(port, port_str, 10);
+	snprintf(port_str, 6 * sizeof(char), "%u", port);
 	ADDRINFOA* result = null;
 	errCode = GetAddrInfoA(null, port_str, &hints, &result);
 	if (errCode != 0)
@@ -56,7 +57,7 @@ SZ_API SZ_OpenServerSocket(SZ_Port port, SZ_Protocol protocol, SZ_Connection con
 	if (wSocket == INVALID_SOCKET)
 		return SZ_API::SZ_SOCKET_OPEN_FAILED;
 
-	errCode = bind(wSocket, result->ai_addr, result->ai_addrlen);
+	errCode = bind(wSocket, result->ai_addr, (int)result->ai_addrlen);
 	if (errCode == SOCKET_ERROR)
 	{
 		FreeAddrInfoA(result);
@@ -76,24 +77,24 @@ SZ_API SZ_OpenServerSocket(SZ_Port port, SZ_Protocol protocol, SZ_Connection con
 	pSocket->connections = connections;
 	pSocket->port = port;
 	pSocket->protocol = protocol;
-	pSocket->handle = new unsigned int;
-	*(unsigned int*)pSocket->handle = wSocket;
+	pSocket->handle = new SOCKET;
+	*(SOCKET*)pSocket->handle = wSocket;
 
 	return SZ_API::SZ_SUCCESS;
 }
 
 SZ_API SZ_AcceptClient(const SZ_Socket& server, SZ_Socket* client)
 {
-	sockaddr* addr;
+	sockaddr addr;
 	int addr_len;
-	SOCKET clientSocket = accept(*(unsigned int*)server.handle, addr, &addr_len);
+	SOCKET clientSocket = accept(*(unsigned int*)server.handle, &addr, &addr_len);
 	if (clientSocket == INVALID_SOCKET)
 		return SZ_API::SZ_SOCKET_ACCEPT_FAILED;
 
-	strcpy_s((char*)client->address, addr_len * sizeof(char), addr->sa_data);
+	strcpy_s((char*)client->address, addr_len * sizeof(char), addr.sa_data);
 	client->protocol = server.protocol;
-	client->handle = new unsigned int;
-	*(unsigned int*)client->handle = clientSocket;
+	client->handle = new SOCKET;
+	*(SOCKET*)client->handle = clientSocket;
 
 	return SZ_API::SZ_SUCCESS;
 }
@@ -120,7 +121,7 @@ SZ_API SZ_OpenClientSocket(SZ_Address address, SZ_Port port, SZ_Protocol protoco
 	}
 
 	char port_str[6];
-	itoa(port, port_str, 10);
+	snprintf(port_str, 6 * sizeof(char), "%u", port);
 	ADDRINFOA* result = null, * ptr = null;
 	errCode = GetAddrInfoA(address, port_str, &hints, &result);
 	if (errCode != 0)
@@ -133,7 +134,7 @@ SZ_API SZ_OpenClientSocket(SZ_Address address, SZ_Port port, SZ_Protocol protoco
 		if (wSocket == INVALID_SOCKET)
 			return SZ_API::SZ_SOCKET_OPEN_FAILED;
 
-		errCode = connect(wSocket, ptr->ai_addr, ptr->ai_addrlen);
+		errCode = connect(wSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
 		if (errCode == SOCKET_ERROR) 
 		{
 			closesocket(wSocket);
@@ -150,8 +151,8 @@ SZ_API SZ_OpenClientSocket(SZ_Address address, SZ_Port port, SZ_Protocol protoco
 
 	pSocket->port = port;
 	pSocket->protocol = protocol;
-	pSocket->handle = new unsigned int;
-	*(unsigned int*)pSocket->handle = wSocket;
+	pSocket->handle = new SOCKET;
+	*(SOCKET*)pSocket->handle = wSocket;
 
 	return SZ_API::SZ_SUCCESS;
 }
@@ -281,19 +282,19 @@ SZ_Message SZ_Send(const SZ_Socket& client, char* buffer, int size, int* sent)
 void SZ_SocketStopRcv(SZ_Socket* skt)
 {
 	if (skt->handle == null) return;
-	shutdown(*(unsigned int*)skt->handle, SD_RECEIVE);
+	shutdown(*(SOCKET*)skt->handle, SD_RECEIVE);
 }
 
 void SZ_SocketStopSend(SZ_Socket* skt)
 {
 	if (skt->handle == null) return;
-	shutdown(*(unsigned int*)skt->handle, SD_SEND);
+	shutdown(*(SOCKET*)skt->handle, SD_SEND);
 }
 
 void SZ_CloseSocket(SZ_Socket* skt)
 {
 	if (skt->handle == null) return;
-	closesocket(*(unsigned int*)skt->handle);
+	closesocket(*(SOCKET*)skt->handle);
 	delete skt->handle;
 	skt->handle = null;
 }
