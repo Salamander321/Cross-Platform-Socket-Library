@@ -1,5 +1,5 @@
 #include "../../SZ_Socket.h"
-#include <string>
+#include <cstring>
 #include <iostream>
 
 // Errors are not maintained properly and only accepting single server
@@ -8,7 +8,7 @@
 #ifdef _WIN32
 #define SZAPI(x) if(x!=SZ_SUCCESS) __debugbreak()
 #else
-#define SZAPI(x) if(x!=SZ_SUCCESS) *(nullptr)
+#define SZAPI(x) if(x!=SZ_SUCCESS) (nullptr)
 #endif
 
 // Receive callback
@@ -37,12 +37,12 @@ unsigned int OnMessageReceive(SZ_Message msg, const SZ_Socket* client, char* buf
 int main()
 {
 	SZAPI(SZ_InitializeAPI());
-
+    SZ_Address address = "127.0.0.1";
 	SZ_Socket server;
-	SZAPI(SZ_OpenServerSocket(2000, SZ_TCP, SZ_MAX_CONNECTION, &server));
+	SZAPI(SZ_OpenServerSocket(address,2000, SZ_TCP, SZ_MAX_CONNECTION, &server));
 
-	printf("Waiting for clients to show up...");
-
+	printf("Waiting for clients to show up...\n");
+   // printf("Server address is %s\n",server.address);
 	SZ_Socket client;
 	SZAPI(SZ_AcceptClient(server, &client));
 

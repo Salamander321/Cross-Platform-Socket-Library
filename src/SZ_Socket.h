@@ -84,7 +84,7 @@ struct SZ_Socket;
 SZ_API SZ_InitializeAPI();
 
 // To start a Server
-SZ_API SZ_OpenServerSocket(SZ_Port, SZ_Protocol, SZ_Connection, SZ_Socket*);
+SZ_API SZ_OpenServerSocket(SZ_Address,SZ_Port, SZ_Protocol, SZ_Connection, SZ_Socket*);
 
 // Server accpets clients, wait until a client appairs
 SZ_API SZ_AcceptClient(const SZ_Socket& server, SZ_Socket* client);

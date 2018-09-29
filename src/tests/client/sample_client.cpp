@@ -1,5 +1,5 @@
 #include "../../SZ_Socket.h"
-#include <string>
+#include <cstring>
 #include <iostream>
 
 // Errors are not maintained properly and only accepting single server
@@ -8,7 +8,7 @@
 #ifdef _WIN32
 #define SZAPI(x) if(x!=SZ_SUCCESS) __debugbreak()
 #else
-#define SZAPI(x) if(x!=SZ_SUCCESS) *(nullptr)
+#define SZAPI(x) if(x!=SZ_SUCCESS) (nullptr)
 #endif
 
 // Receive callback
@@ -31,7 +31,7 @@ int main()
 {
 	SZAPI(SZ_InitializeAPI());
 
-	SZ_Address address = "192.168.1.102"; // ip-address
+	SZ_Address address = "127.0.0.1"; // ip-address
 
 	SZ_Socket client;
 	SZAPI(SZ_OpenClientSocket(address, 2000, SZ_TCP, &client));
