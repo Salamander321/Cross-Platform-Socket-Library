@@ -10,7 +10,7 @@
 #pragma comment (lib, "AdvApi32.lib")
 
 const SZ_Connection SZ_MAX_CONNECTION = 0x7fffffff;
-const SZ_Port DEFAULT_PORT = 8000;
+const SZ_Port SZ_DEFAULT_PORT = 8000;
 const SZ_Port SZ_ANY_PORT = 0;
 static bool sz_apiStarted = false;
 

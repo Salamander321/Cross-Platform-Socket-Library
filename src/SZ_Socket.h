@@ -42,7 +42,7 @@ typedef int SZ_Connection;
 extern const SZ_Connection SZ_MAX_CONNECTION;
 
 // Use default HTTP port
-extern const SZ_Port DEFAULT_PORT;
+extern const SZ_Port SZ_DEFAULT_PORT;
 
 /*
 	- Connection to any random port, setting this will cause the struct SZ_Socket to have port of 0
