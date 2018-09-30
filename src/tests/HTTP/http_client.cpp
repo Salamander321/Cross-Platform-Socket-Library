@@ -24,8 +24,13 @@ int main()
 	SZ_InitializeAPI();
 	SZ_Socket Client;
 
-	// IP address of google.com
-	SZ_Address address = "172.217.17.142";
+	/*
+		- Setting to "www.google.com" will select from the available servers
+		- This is the recommended way to connect to the server with lowest ping
+		- If connecting to specific server of the domain is necessary, ip address of the server can be specified
+		- Example for google server use:: `SZ_Address address ="172.217.17.142"`;
+	*/
+	SZ_Address address = "www.google.com";
 	// Most of HTTP servers work on 80 port no.
 	if (SZ_OpenClientSocket(address, 80, SZ_TCP, &Client) != SZ_SUCCESS)
 	{

@@ -65,7 +65,6 @@ SZ_API SZ_OpenServerSocket(SZ_IPVersion ipv, SZ_Address address, SZ_Port port, S
 	errCode = bind(wSocket, result->ai_addr, (int)result->ai_addrlen);
 	if (errCode == SOCKET_ERROR)
 	{
-		printf("WSA Error: %d", WSAGetLastError());
 		FreeAddrInfoA(result);
 		closesocket(wSocket);
 		return SZ_API::SZ_SOCKET_BIND_FAILED;
@@ -143,7 +142,6 @@ SZ_API SZ_OpenClientSocket(SZ_Address address, SZ_Port port, SZ_Protocol protoco
 		errCode = connect(wSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
 		if (errCode == SOCKET_ERROR) 
 		{
-			printf("Error=%d", WSAGetLastError());
 			closesocket(wSocket);
 			wSocket = INVALID_SOCKET;
 			continue;
