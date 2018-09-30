@@ -31,8 +31,8 @@ enum SZ_Message
 
 // Port value ranges from 0 to 65535 so unsigned short is chosen
 typedef unsigned short SZ_Port;
-// Address max character can be upto 14 for IPV4, currently IPV6 not supported
-typedef char SZ_Address[14];
+// Address max character can be upto 15 for IPV4, currently IPV6 not supported
+typedef char SZ_Address[15];
 // Internal pointer to platform specific handle to socket
 typedef void* SZ_Handle;
 // Number of connections supported by server, for max connection set this to SZ_MAX_CONNECTION

@@ -35,8 +35,9 @@ int main()
 
 	SZ_Socket client;
 	SZAPI(SZ_OpenClientSocket(address, 2000, SZ_TCP, &client));
-
-	const char* msg = "Hi I am new to the server";
+	char msg[234];
+	printf("Enter a message to send to server ");
+	scanf("%s",msg);
 	int recvd;
 	SZ_Message res = SZ_Send(client, msg, (int)strlen(msg), &recvd);
 	if (res == SZ_BYTE_SENT)
