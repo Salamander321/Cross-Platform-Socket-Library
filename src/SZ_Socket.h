@@ -31,7 +31,7 @@ enum SZ_Message
 
 // Port value ranges from 0 to 65535 so unsigned short is chosen
 typedef unsigned short SZ_Port;
-// Address max character can be upto 15 for IPV4 and 40 for IPV6, so 40 is chosen
+// Address max character can be upto 15 for IPv4 and 40 for IPv6, so 40 is chosen
 typedef char SZ_Address[40];
 // Internal pointer to platform specific handle to socket
 typedef void* SZ_Handle;
@@ -53,6 +53,12 @@ extern const SZ_Port SZ_ANY_PORT;
 
 // it's just preference
 #define null 0
+
+// Internet Protocal version, IPv4 or IPv6
+enum SZ_IPVersion
+{
+	SZ_IPv4, SZ_IPv6
+};
 
 // Only supports TCP and UDP protocol
 enum SZ_Protocol
@@ -87,12 +93,12 @@ struct SZ_Socket;
 SZ_API SZ_InitializeAPI();
 
 // To start a Server, pass null as SZ_Address if you want to bind to any address possible
-SZ_API SZ_OpenServerSocket(SZ_Address, SZ_Port, SZ_Protocol, SZ_Connection, SZ_Socket*);
+SZ_API SZ_OpenServerSocket(SZ_IPVersion, SZ_Address, SZ_Port, SZ_Protocol, SZ_Connection, SZ_Socket*);
 
 // Server accpets clients, wait until a client appairs
 SZ_API SZ_AcceptClient(const SZ_Socket& server, SZ_Socket* client);
 
-// To connect to a Server
+// To connect to a Server, IP version is automatically matched with the server
 SZ_API SZ_OpenClientSocket(SZ_Address, SZ_Port, SZ_Protocol, SZ_Socket*);
 
 // Call back when message is received

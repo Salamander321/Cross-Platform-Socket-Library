@@ -24,7 +24,7 @@ SZ_API SZ_InitializeAPI()
 	return SZ_API::SZ_SUCCESS;
 }
 
-SZ_API SZ_OpenServerSocket(SZ_Address address, SZ_Port port, SZ_Protocol protocol, SZ_Connection connections, SZ_Socket* pSocket)
+SZ_API SZ_OpenServerSocket(SZ_IPVersion ipv, SZ_Address address, SZ_Port port, SZ_Protocol protocol, SZ_Connection connections, SZ_Socket* pSocket)
 {
 	if (!sz_apiStarted) return SZ_API::SZ_API_NOT_INITIALIZED;
 
@@ -32,7 +32,11 @@ SZ_API SZ_OpenServerSocket(SZ_Address address, SZ_Port port, SZ_Protocol protoco
 
 	ADDRINFOA hints;
 	ZeroMemory(&hints, sizeof(hints));
-	hints.ai_family = AF_INET;
+	if (ipv == SZ_IPVersion::SZ_IPv4)
+		hints.ai_family = AF_INET;
+	else
+		hints.ai_flags = AF_INET6;
+
 	hints.ai_flags = AI_PASSIVE;
 
 	if (protocol == SZ_Protocol::SZ_TCP)

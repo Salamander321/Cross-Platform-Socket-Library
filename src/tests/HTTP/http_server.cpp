@@ -30,7 +30,7 @@ int main()
 	char http_header[2048] = "HTTP/1.1 200 OK\r\n\n";
 	strcat_s(http_header,response_data);
 	
-	errmsg = SZ_OpenServerSocket(address,8000,SZ_TCP,SZ_MAX_CONNECTION,&Server);
+	errmsg = SZ_OpenServerSocket(SZ_IPv4, address,8000,SZ_TCP,SZ_MAX_CONNECTION,&Server);
 	if (errmsg != SZ_SUCCESS)
 		printf("Error, could not open server socket");
 	
