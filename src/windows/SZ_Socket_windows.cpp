@@ -10,6 +10,7 @@
 #pragma comment (lib, "AdvApi32.lib")
 
 const SZ_Connection SZ_MAX_CONNECTION = 0x7fffffff;
+const SZ_Port DEFAULT_PORT = 8000;
 const SZ_Port SZ_ANY_PORT = 0;
 static bool sz_apiStarted = false;
 
@@ -23,7 +24,7 @@ SZ_API SZ_InitializeAPI()
 	return SZ_API::SZ_SUCCESS;
 }
 
-SZ_API SZ_OpenServerSocket(SZ_Port port, SZ_Protocol protocol, SZ_Connection connections, SZ_Socket* pSocket)
+SZ_API SZ_OpenServerSocket(SZ_Address address, SZ_Port port, SZ_Protocol protocol, SZ_Connection connections, SZ_Socket* pSocket)
 {
 	if (!sz_apiStarted) return SZ_API::SZ_API_NOT_INITIALIZED;
 
@@ -48,7 +49,7 @@ SZ_API SZ_OpenServerSocket(SZ_Port port, SZ_Protocol protocol, SZ_Connection con
 	char port_str[6];
 	snprintf(port_str, 6 * sizeof(char), "%u", port);
 	ADDRINFOA* result = null;
-	errCode = GetAddrInfoA(null, port_str, &hints, &result);
+	errCode = GetAddrInfoA(address, port_str, &hints, &result);
 	if (errCode != 0)
 		return SZ_API::SZ_SOCKET_OPEN_FAILED;
 
@@ -60,6 +61,7 @@ SZ_API SZ_OpenServerSocket(SZ_Port port, SZ_Protocol protocol, SZ_Connection con
 	errCode = bind(wSocket, result->ai_addr, (int)result->ai_addrlen);
 	if (errCode == SOCKET_ERROR)
 	{
+		printf("WSA Error: %d", WSAGetLastError());
 		FreeAddrInfoA(result);
 		closesocket(wSocket);
 		return SZ_API::SZ_SOCKET_BIND_FAILED;

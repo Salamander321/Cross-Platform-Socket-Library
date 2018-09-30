@@ -130,12 +130,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\src\tests\http_server\sample_server.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\SZ_Socket_windows\SZ_Socket_windows.vcxproj">
       <Project>{bb520c55-c173-40cf-8a99-275658db47b7}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\tests\HTTP\http_server.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

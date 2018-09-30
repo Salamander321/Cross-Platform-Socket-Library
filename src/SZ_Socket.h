@@ -31,8 +31,8 @@ enum SZ_Message
 
 // Port value ranges from 0 to 65535 so unsigned short is chosen
 typedef unsigned short SZ_Port;
-// Address max character can be upto 15 for IPV4, currently IPV6 not supported
-typedef char SZ_Address[15];
+// Address max character can be upto 15 for IPV4 and 40 for IPV6, so 40 is chosen
+typedef char SZ_Address[40];
 // Internal pointer to platform specific handle to socket
 typedef void* SZ_Handle;
 // Number of connections supported by server, for max connection set this to SZ_MAX_CONNECTION
@@ -40,6 +40,9 @@ typedef int SZ_Connection;
 
 // Maximum connections supported in a single server
 extern const SZ_Connection SZ_MAX_CONNECTION;
+
+// Use default HTTP port
+extern const SZ_Port DEFAULT_PORT;
 
 /*
 	- Connection to any random port, setting this will cause the struct SZ_Socket to have port of 0
@@ -83,8 +86,8 @@ struct SZ_Socket;
 */
 SZ_API SZ_InitializeAPI();
 
-// To start a Server
-SZ_API SZ_OpenServerSocket(SZ_Address,SZ_Port, SZ_Protocol, SZ_Connection, SZ_Socket*);
+// To start a Server, pass null as SZ_Address if you want to bind to any address possible
+SZ_API SZ_OpenServerSocket(SZ_Address, SZ_Port, SZ_Protocol, SZ_Connection, SZ_Socket*);
 
 // Server accpets clients, wait until a client appairs
 SZ_API SZ_AcceptClient(const SZ_Socket& server, SZ_Socket* client);

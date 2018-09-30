@@ -4,9 +4,6 @@
 /*This is a simple http client that send HTTP GET request to Google Server
 * and receive response */
 
-
-
-
 // Receive callback
 
 unsigned int OnMessageReceive(SZ_Message msg, const SZ_Socket* client, char* buffer, int received)
@@ -33,7 +30,7 @@ int main()
 	SZ_Address address ="172.217.17.142";
 	
 	//Most of HTTP servers work on 80 port no.
-	SZ_API(SZ_OpenClientSocket(address,80,SZ_TCP,&Client));
+	SZ_OpenClientSocket(address,80,SZ_TCP,&Client);
     //characters for sending http request to server
 	char request[] = "GET /HTTP/1.1\r\n\r\n";
    	
@@ -51,10 +48,8 @@ int main()
 
 	SZ_CloseSocket(&Client);
 	
+	std::cin.get();
+
 	return 0;
-
-	
-
-
 
 }

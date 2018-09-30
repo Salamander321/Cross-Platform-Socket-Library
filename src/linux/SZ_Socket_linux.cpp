@@ -9,6 +9,7 @@
 #include <netdb.h>
 
 const SZ_Connection SZ_MAX_CONNECTION = 0x7fffffff;
+const SZ_Port DEFAULT_PORT = 8000;
 const SZ_Port SZ_ANY_PORT = 0;
 
 SZ_API SZ_InitializeAPI()
@@ -16,7 +17,7 @@ SZ_API SZ_InitializeAPI()
 	return SZ_API::SZ_SUCCESS;
 }
 
-SZ_API SZ_OpenServerSocket(SZ_Address address ,SZ_Port port, SZ_Protocol protocol, SZ_Connection connections, SZ_Socket* pSocket)
+SZ_API SZ_OpenServerSocket(SZ_Address address, SZ_Port port, SZ_Protocol protocol, SZ_Connection connections, SZ_Socket* pSocket)
 {
 	int errCode = 0;
 
@@ -34,7 +35,7 @@ SZ_API SZ_OpenServerSocket(SZ_Address address ,SZ_Port port, SZ_Protocol protoco
 	char port_str[6];
 	snprintf(port_str, 6 * sizeof(char), "%u", port);
 	addrinfo* result = null;
-	errCode = getaddrinfo(null, port_str, &hints, &result);
+	errCode = getaddrinfo(address, port_str, &hints, &result);
 	if (errCode != 0)
 		return SZ_API::SZ_SOCKET_OPEN_FAILED;
 
@@ -42,18 +43,15 @@ SZ_API SZ_OpenServerSocket(SZ_Address address ,SZ_Port port, SZ_Protocol protoco
 	lSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 	if (lSocket == -1)
 		return SZ_API::SZ_SOCKET_OPEN_FAILED;
-    struct sockaddr_in temp_addr; //We have to use sockaddr_in6 if ipv6 is used but if information obtained from getaddrinfo() can be used directly, we don't have to declare separate structure
-    temp_addr.sin_family = AF_INET;
-    temp_addr.sin_port = htons(port);
-    temp_addr.sin_addr.s_addr = inet_addr(address);
-	errCode = bind(lSocket, (struct sockaddr*) &temp_addr, result->ai_addrlen);
+
+	errCode = bind(lSocket, result->ai_addr, result->ai_addrlen);
 	if (errCode != 0)
 	{
 		freeaddrinfo(result);
 		close(lSocket);
 		return SZ_API::SZ_SOCKET_BIND_FAILED;
 	}
-	strcpy((char*)pSocket->address,address);//strcpy((char*)pSocket->address, result->ai_addr->sa_data);
+	strcpy((char*)pSocket->address, result->ai_addr->sa_data);
 	freeaddrinfo(result);
 
 	errCode = listen(lSocket, connections);
